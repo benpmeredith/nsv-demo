@@ -174,7 +174,7 @@
                     newP.innerHTML = message;
                     chatHistory.appendChild(newP);
                     //ML LABELS: Weapons,Bullying,Physical,Dating
-                    //OUR LABELS: "Bullying", "Relationship Violence", "Weapon Use", "Physical Violence"]
+                    //OUR LABELS: "Weapon Use", "Physical Violence", "Bullying", "Dating Violence"]
                     if (count > 0){
                         // PREDICTION
                         behaviorPayload = {'behavior': phrase}; 
@@ -182,7 +182,7 @@
                         resource2.innerHTML = `<b><a href='${gun.link2}'>Resource 2: </a></b><br>` + gun.example2;
                         resourceList.appendChild(resource1);
                         resourceList.appendChild(resource2);
-                        createChart(.3, .2, .1, .5);
+                        createChart(.7, .8, .2, .1);
                     }
                     
                     /* $.ajax(`http://104.211.61.135:5050/hello`, {
@@ -329,7 +329,8 @@
       myChart = new Chart(ctx, {
           type: 'bar',
           data: {
-              labels: ["Bullying", "Relationship Violence", "Weapon Use", "Physical Violence"],
+              labels: ["Weapon Use", "Physical Violence", "Bullying", "Dating Violence"],
+            //   ["Bullying", "Relationship Violence", "Weapon Use", "Physical Violence"],
               datasets: [{
                   label: 'Related Violence',
                   data: [w, x, y, z],
