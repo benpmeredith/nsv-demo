@@ -1,0 +1,13 @@
+{
+    "name": "no-school-violence",
+    "dependencies": {
+        "botbuilder": "^4.0.0-preview1.1",
+        "chatdown": "^1.0.10",
+        "dotenv": "^2.0.0",
+        "restify": "^4.3.0"
+    },
+    "devDependencies": {
+        "@types/node": "^6.0.52",
+        "@types/restify": "^2.0.35"
+    }
+}

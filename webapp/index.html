@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title> The Lantern </title>
+  <script src="Chart.bundle.js"></script>
+  <script src="resources/bully.js"></script>
+  <script src="resources/gun.js"></script>
+        
+  <link rel="stylesheet" type="text/css" href="style.css"/>  
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+</head>
+
+<body>
+  <main>
+    <nav class="navbar sticky-top flex-md-nowrap p-0" style="display:block;">
+        <img id="header-image" style="width: 12rem; height: 100%; float:right;" src="download.jpeg">     
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" style="color:#003b9b !important; font-size:42px; font-family: 'Montserrat', sans-serif;">The Lantern</a>        
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+            </li>
+        </ul>
+    </nav>
+    <div class="container-fluid" style="background-color: #E8EBF0 !important;">
+        <div class="row">
+            <nav class="col-md-3 d-none d-md-block bg-light sidebar">
+              <div class="sidebar-sticky">
+            
+    
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                <span>Resources</span>
+                <!-- <a class="d-flex align-items-center text-muted" href="https://getbootstrap.com/docs/4.0/examples/dashboard/#">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                </a> -->
+                </h6>
+                <input class="form-control input-sm" type="text" placeholder="Search" aria-label="Search"><br>                
+                <ul class="nav flex-column" id="resource-list">
+                    <b><a href="" id="resource-1"></a></b>
+                    <b><a href="" id="resource-2"></a></b>
+                </ul>
+              </div>
+            </nav>
+            <div class="col-md-9 ml-sm-auto col-lg-9 pt-3 px-4"><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                  <h1 class="h2">Inferences</h1>
+                  <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group mr-2">
+                        <img src="chat.png" width="50px" height="30px">  
+                        <button class="btn btn-sm btn-outline-secondary" href="mailto:someone@example.com?Subject=Hello%20again">Ask an expert</button>
+                    </div>
+                  </div>
+                </div>
+                <canvas class="my-4 chartjs-render-monitor" id="myChart" width="2160" height="1212" style="display: block; height: 456px; width: 1080px;"></canvas>
+            </div>
+        </div>
+    </div>
+    <section id="chatbot" class="closed">
+        <article id="text-container"></article>
+        <div>
+            <form id="write-text">
+            <input type="text" id="text-input" onkeyup="getInput(event)" autocomplete="off" style="font-size: 18px;">
+            <input type="text" style="display: none;" />
+            </form>
+            <button id="chat" onclick="openChat(event)"><img src="chat.png"></button>
+        </div>
+    </section>
+  </main>
+    <!-- <header><img src="download.jpeg"><h1> The Lantern </h1> </header> -->
+    <!-- <div id="search-bar-div">
+        <input type="text" id="search-bar" onkeyup="myFunction()" placeholder="Please enter a behavior..">
+    </div> -->
+    <!-- <div id="graph-header">
+        <p>The behavior(s) entered have been associated with these types of violence in the No School Violence Corpus. Our 
+            corpus draws from thousands of articles that focus on mental health and school violence.</p>
+    </div>
+    <div id="main-content">
+        <section id="chart-section">
+            <canvas id="myChart"></canvas>
+        </section>
+        <div id="resources" style="border:1em">
+            <p>Here are some resources that may help:</p>
+        </div>
+    </div>
+    <section id="chatbot" class="closed">
+      <article id="text-container"></article>
+      <div>
+        <form id="write-text">
+          <input type="text" id="text-input" onkeyup="getInput(event)" autocomplete="off" style="font-size: 18px;">
+          <input type="text" style="display: none;" />
+        </form>
+        <button id="chat" onclick="openChat(event)"><img src="chat.png"></button>
+      </div>
+    </section> -->
+
+  <!-- THIS IS JAVASCRIPT --> 
+  <script type="text/javascript">
+
+    let numbers = [];
+    var myChart;
+    const DIRECT_LINE_GENERATE_CONVO_URL="https://directline.botframework.com/v3/directline/conversations";
+    const DIRECT_LINE_GENERATE_TOKEN_URL="https://directline.botframework.com/v3/directline/tokens/generate";
+    const DIRECT_SECRET="NtW6gchL9zw.cwA.vyw.5oviFr_Z1PVq5400TF4c6Ci1P6hgpzjwtKtOptxIzq0";
+    var DIRECT_LINE_POST_URL="";
+    var DIRECT_LINE_CONVERSATION_TOKEN="";
+    var DIRECT_LINE_CONVERSATION_ID="";
+    // var directLineSpecUrl = 'https://docs.botframework.com/en-us/restapi/directline3/swagger.json';
+    var directLineClientName = 'DirectLineClient';
+
+    createChart(0.0, 0.0, 0.0, 0.0);
+    
+    window.phrases = []
+    function getInput(event){
+      if(event.keyCode != 13){ return };
+
+      let chatHistory = document.getElementById('text-container');
+      let newText = document.getElementById('text-input').value;
+      let newP = document.createElement('p');
+      newP.innerHTML = newText;
+      chatHistory.appendChild(newP);
+
+      createConversation(newText);
+      document.getElementById('text-input').value = '';
+
+      event.preventDefault();
+    }
+
+    function openChat(event){
+      let chatbot = document.getElementById('chatbot');
+      let chatHistory = document.getElementById('text-container');
+      let newP = document.createElement('p');
+      if(chatbot.className == 'open'){
+        chatHistory.innerHTML = '';
+        chatbot.className = 'closed';
+      }else{
+        newP.innerHTML = 
+        `Hi there. Please enter a behavior you have been concerned about, 
+        and we can assess the possible risks.`;
+        chatbot.className="open";
+        chatHistory.appendChild(newP);
+      }
+      event.preventDefault();
+    }
+
+    function createWebSocket(stream){
+
+    }
+
+    function createConvoCallBackSuccess(response){
+        var behavior_results = [];
+        var phrase = phrases[phrases.length-1];
+        var stream_url = response.streamUrl;
+        ws = new WebSocket(stream_url) 
+        ws.onopen = function(msg) { 
+            // Logic for opened connection 
+            console.log('Connection successfully opened'); 
+        }; 
+        ws.onmessage = function(msg) { 
+            // Handle received data 
+            let chatHistory = document.getElementById('text-container');
+            let resourceList = document.getElementById('resource-list');
+            data = JSON.parse(msg.data);
+            data.activities.filter(a => a.type == "message").filter(a => a.from.id == "nsvbot").forEach(a => {
+                console.log(a.text);
+                
+                if (a.text != "[conversationUpdate event detected]"){
+                    var message = a.text.slice(2);
+                    var count = a.text.slice(0, 2);
+                    let newP = document.createElement('p');
+                    let resource1 = document.createElement('p');
+                    let resource2 = document.createElement('p');
+                    newP.innerHTML = message;
+                    chatHistory.appendChild(newP);
+                    //ML LABELS: Weapons,Bullying,Physical,Dating
+                    //OUR LABELS: "Bullying", "Relationship Violence", "Weapon Use", "Physical Violence"]
+                    if (count > 0){
+                        // PREDICTION
+                        behaviorPayload = {'behavior': phrase}; 
+                        resource1.innerHTML = `<b><a href='${gun.link1}'>Resource 1: </a></b><br>` + gun.example1;
+                        resource2.innerHTML = `<b><a href='${gun.link2}'>Resource 2: </a></b><br>` + gun.example2;
+                        resourceList.appendChild(resource1);
+                        resourceList.appendChild(resource2);
+                        createChart(.3, .2, .1, .5);
+                    }
+                    
+                    /* $.ajax(`http://104.211.61.135:5050/hello`, {
+                        method: 'get',
+                        // data: JSON.stringify(behaviorPayload),
+                        success: function (data, textString, jqXHR) {
+                            console.log(data);   
+                            
+                            behavior_results = behavior_results.map(function(v, i) {
+                                return v + data.y_pred[i];
+                            });
+                            console.log(behavior_results);
+                        },
+                        error: function (one, two, three) {
+                            console.error('Unable to connect to API')
+                        },
+                    }); */
+                }
+            });            
+        }; 
+        ws.onclose = function(msg) { 
+            // Logic for closed connection 
+            console.log('Connection was closed.'); 
+        } 
+        ws.error = function(err){ 
+            console.log(err); 
+            // Write errors to console 
+        }
+
+        
+        var payload = {
+            textFormat: 'plain',
+            text: phrase,
+            type: 'message',
+            from: {
+                id: directLineClientName,
+                name: directLineClientName
+            }
+        }
+
+        DIRECT_LINE_POST_URL=`https://directline.botframework.com/v3/directline/conversations/${response.conversationId}/activities`;
+        $.ajax(`${DIRECT_LINE_POST_URL}`, {
+            method: 'post',
+            data: JSON.stringify(payload),
+            beforeSend: function (xhr) {
+                /* Authorization header */
+                xhr.setRequestHeader("Authorization", "Bearer " + DIRECT_LINE_CONVERSATION_TOKEN);
+            },
+            success: function (data, textString, jqXHR) {
+                console.log(data);
+            },
+            error: function (one, two, three) {
+                console.error('Unable to connect to API')
+            },
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+    };
+    
+    function createTokenCallBackSuccess(response){
+        DIRECT_LINE_CONVERSATION_ID = response.conversationId;
+        DIRECT_LINE_CONVERSATION_TOKEN = response.token;
+        console.log(DIRECT_LINE_POST_URL);
+        $.ajax(`${DIRECT_LINE_GENERATE_CONVO_URL}`, {
+                method: 'post',
+                beforeSend: function (xhr) {
+                    /* Authorization header */
+                    xhr.setRequestHeader("Authorization", "Bearer " + DIRECT_LINE_CONVERSATION_TOKEN);
+                },
+                success: createConvoCallBackSuccess,
+                error: function (one, two, three) {
+                    console.error('Unable to connect to API')
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+    }
+
+    function createConversation(phrase){
+        let chatHistory = document.getElementById('text-container');
+        let newP = document.createElement('p');
+        let newImg = document.createElement('img');
+        newImg.src = 'load.gif';
+
+        let paragraphCount = Array.from(document.getElementById('text-container').querySelectorAll('p'));
+        var conversationToken;
+        var DELAY = 300
+        phrases.push(phrase)
+        if (phrases.length === 1){
+            $.ajax(`${DIRECT_LINE_GENERATE_TOKEN_URL}`, {
+                method: 'post',
+                beforeSend: function (xhr) {
+                    /* Authorization header */
+                    xhr.setRequestHeader("Authorization", "Bearer " + DIRECT_SECRET);
+                },
+                success: createTokenCallBackSuccess,
+                error: function (one, two, three) {
+                    console.error('Unable to connect to API')
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        } else {
+            var payload = {
+                textFormat: 'plain',
+                text: phrase,
+                type: 'message',
+                from: {
+                    id: directLineClientName,
+                    name: directLineClientName
+                }
+            }
+            
+            DIRECT_LINE_POST_URL=`https://directline.botframework.com/v3/directline/conversations/${DIRECT_LINE_CONVERSATION_ID}/activities`;
+            $.ajax(`${DIRECT_LINE_POST_URL}`, {
+                method: 'post',
+                data: JSON.stringify(payload),
+                beforeSend: function (xhr) {
+                    /* Authorization header */
+                    xhr.setRequestHeader("Authorization", "Bearer " + DIRECT_LINE_CONVERSATION_TOKEN);
+                },
+                success: function (data, textString, jqXHR) {
+                    console.log(data);
+                },
+                error: function (one, two, three) {
+                    console.error('Unable to connect to API')
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        }
+    }
+
+    function updateChart(w, x, y, z){
+        myChart.data.datasets.data = [w, x, y, z];
+    }
+
+    function createChart(w, x, y, z){
+      var ctx = document.getElementById("myChart");
+      myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: ["Bullying", "Relationship Violence", "Weapon Use", "Physical Violence"],
+              datasets: [{
+                  label: 'Related Violence',
+                  data: [w, x, y, z],
+                  backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(255, 206, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)'
+                  ],
+                  borderColor: [
+                      'rgba(255,99,132,1)',
+                      'rgba(54, 162, 235, 1)',
+                      'rgba(255, 206, 86, 1)',
+                      'rgba(75, 192, 192, 1)'
+                  ],
+                  borderWidth: 1
+              }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            legend: {
+                display: false,
+            }
+          }
+      });
+    }
+  </script>
+  
+  <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous">
+  </script>
+  </body>
+</html>
