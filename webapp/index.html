@@ -7,6 +7,7 @@
   <script src="Chart.bundle.js"></script>
   <script src="resources/bully.js"></script>
   <script src="resources/gun.js"></script>
+  <script src="hidden-variables.js"></script>  
         
   <link rel="stylesheet" type="text/css" href="style.css"/>  
   <!-- Bootstrap core CSS -->
@@ -97,16 +98,11 @@
 
   <!-- THIS IS JAVASCRIPT --> 
   <script type="text/javascript">
-
     let numbers = [];
     var myChart;
-    const DIRECT_LINE_GENERATE_CONVO_URL="https://directline.botframework.com/v3/directline/conversations";
-    const DIRECT_LINE_GENERATE_TOKEN_URL="https://directline.botframework.com/v3/directline/tokens/generate";
-    const DIRECT_SECRET="NtW6gchL9zw.cwA.vyw.5oviFr_Z1PVq5400TF4c6Ci1P6hgpzjwtKtOptxIzq0";
     var DIRECT_LINE_POST_URL="";
     var DIRECT_LINE_CONVERSATION_TOKEN="";
     var DIRECT_LINE_CONVERSATION_ID="";
-    // var directLineSpecUrl = 'https://docs.botframework.com/en-us/restapi/directline3/swagger.json';
     var directLineClientName = 'DirectLineClient';
 
     createChart(0.0, 0.0, 0.0, 0.0);
@@ -247,7 +243,7 @@
         DIRECT_LINE_CONVERSATION_ID = response.conversationId;
         DIRECT_LINE_CONVERSATION_TOKEN = response.token;
         console.log(DIRECT_LINE_POST_URL);
-        $.ajax(`${DIRECT_LINE_GENERATE_CONVO_URL}`, {
+        $.ajax(`${env_variables.DIRECT_LINE_GENERATE_CONVO_URL}`, {
                 method: 'post',
                 beforeSend: function (xhr) {
                     /* Authorization header */
@@ -274,11 +270,11 @@
         var DELAY = 300
         phrases.push(phrase)
         if (phrases.length === 1){
-            $.ajax(`${DIRECT_LINE_GENERATE_TOKEN_URL}`, {
+            $.ajax(`${env_variables.DIRECT_LINE_GENERATE_TOKEN_URL}`, {
                 method: 'post',
                 beforeSend: function (xhr) {
                     /* Authorization header */
-                    xhr.setRequestHeader("Authorization", "Bearer " + DIRECT_SECRET);
+                    xhr.setRequestHeader("Authorization", "Bearer " + env_variables.DIRECT_SECRET);
                 },
                 success: createTokenCallBackSuccess,
                 error: function (one, two, three) {
